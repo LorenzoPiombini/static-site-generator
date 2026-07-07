@@ -1,9 +1,8 @@
 from textnode import *
+from functions import *
 
 def main():
-
-    value = TextNode("Hey, this is acctually cool",TextType.TEXT_CODE,"https://lorenxopiombini.com")
-    print(value)
+    copy_content_to_folder(WORKING_DIRECTORY,'./static','./public')
 
 if __name__ == "__main__":
     main()
