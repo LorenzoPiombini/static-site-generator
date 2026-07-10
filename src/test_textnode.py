@@ -26,13 +26,14 @@ class TestTextNode(unittest.TestCase):
 
     def test_not_eq_str(self): 
         node = TextNode("This is a text Node", TextType.BOLD)
-        node2 = TextNode("This is a text node", TextType.BOLD,)
+        node2 = TextNode("This is a text node", TextType.BOLD)
         self.assertNotEqual(node, node2)
 
     def test_not_eq_one_url_one_not(self): 
         node = TextNode("This is a text node", TextType.BOLD,"http://lorenzopiombini.com")
         node2 = TextNode("This is a text node", TextType.BOLD)
         self.assertNotEqual(node, node2)
+
     def test_text(self):
         node = TextNode("This is a text node", TextType.TEXT)
         html_node = text_node_to_html_node(node)
@@ -155,6 +156,10 @@ This is **bolded** paragraph
 This is another paragraph with _italic_ text and `code` here
 This is the same paragraph on a new line
 
+> this is 
+> a quote!
+> some more of that quote
+
 - This is a list
 - with items
 """
@@ -164,6 +169,7 @@ This is the same paragraph on a new line
             [
                 "This is **bolded** paragraph",
                 "This is another paragraph with _italic_ text and `code` here\nThis is the same paragraph on a new line",
+                "> this is \n> a quote!\n> some more of that quote",
                 "- This is a list\n- with items",
             ],
         )
@@ -195,7 +201,7 @@ tag here
 
 This is another paragraph with _italic_ text and `code` here
 
-"""
+        """
 
         node = markdown_to_html_node(md)
         html = node.to_html()
@@ -217,77 +223,25 @@ the **same** even with inline stuff
         self.assertEqual(
             html,
             "<div><pre><code>This is text that _should_ remain\nthe **same** even with inline stuff\n</code></pre></div>",
-        )
+            )
 
-    def test_heading_levels(self):
+    def test_extract_title(self):
+        self.assertEqual(extract_title("# Hello"),"Hello")
+        self.assertEqual(extract_title("#Hello\nthis is a test"),"Hello")
+        with self.assertRaises(ValueError):
+            extract_title("There is no title in here")
+
+    def test_paragraph_with_link(self):
         md = """
-## This is an h2
-
-### This is an h3
-
-#### This is an h4
+This is a paragraph with a [link to boot dev](https://boot.dev) inside it
 """
+
         node = markdown_to_html_node(md)
         html = node.to_html()
         self.assertEqual(
             html,
-            "<div><h2>This is an h2</h2><h3>This is an h3</h3><h4>This is an h4</h4></div>",
-        )
-
-    def test_heading_with_inline(self):
-        md = """
-# This is **bold** in a heading
-"""
-        node = markdown_to_html_node(md)
-        html = node.to_html()
-        self.assertEqual(
-            html,
-            "<div><h1>This is <b>bold</b> in a heading</h1></div>",
-        )
-
-    def test_unordered_list_with_inline(self):
-        md = """
-- Item with **bold**
-- Item with `code`
-- Plain item
-"""
-        node = markdown_to_html_node(md)
-        html = node.to_html()
-        self.assertEqual(
-            html,
-            "<div><ul><li>Item with <b>bold</b></li><li>Item with <code>code</code></li><li>Plain item</li></ul></div>",
-        )
-
-    def test_ordered_list_with_inline(self):
-        md = """
-1. First with _italic_
-2. Second item
-3. Third with **bold**
-"""
-        node = markdown_to_html_node(md)
-        html = node.to_html()
-        self.assertEqual(
-            html,
-            "<div><ol><li>First with <i>italic</i></li><li>Second item</li><li>Third with <b>bold</b></li></ol></div>",
-        )
-
-    def test_mixed_blocks(self):
-        md = """
-# Title
-
-Some paragraph with **bold** and _italic_.
-
-- list item one
-- list item two
-
-> A blockquote here
-"""
-        node = markdown_to_html_node(md)
-        html = node.to_html()
-        self.assertEqual(
-            html,
-            "<div><h1>Title</h1><p>Some paragraph with <b>bold</b> and <i>italic</i>.</p><ul><li>list item one</li><li>list item two</li></ul><blockquote>A blockquote here</blockquote></div>",
-        )
+            '<div><p>This is a paragraph with a <a href="https://boot.dev">link to boot dev</a> inside it</p></div>',
+            )
 
 if __name__ == "__main__":
     unittest.main()

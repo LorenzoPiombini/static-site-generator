@@ -22,7 +22,7 @@ def copy_file_over(src:str,dest:str):
             src_p = os.path.join(src,r)
             copy_file_over(src_p,dir_at_dest)
 
-
+        
 def copy_content_to_folder(working: str, src:str,dest:str):
     try:
         if is_path_valid(working,dest) and is_path_valid(working,src):
@@ -36,5 +36,13 @@ def copy_content_to_folder(working: str, src:str,dest:str):
                 copy_file_over(src_p,dest)
     except Exception as e:
         print(e)
-     
-copy_content_to_folder(WORKING_DIRECTORY,"./static","./public")
+
+def generate_pages_recursive(working:str,dir_path_content:str, template_path:str, dest_dir_path:str):
+    try:
+        if is_path_valid(working,dir_path_content) and is_path_valid(working,dir_path_content) and is_path_valid(working,template_path) and is_path_valid(working,dest_dir_path):
+            gen_pages_over(dir_path_content,dest_dir_path,template_path) 
+
+    except Exception as e:
+        print(e)
+    
+    

@@ -21,7 +21,10 @@ class HTMLNode:
         result = " "
         for key,value in self.props.items():
             result = result + f"{key}=\"{value}\" "
-        return result
+        if result == " ":
+            return result
+        else:
+            return result.rstrip()
 
 class ParentNode(HTMLNode):
     def __init__(self,tag: str, children: list['HTMLNode'], props: dict[str,str] | None = None):
@@ -47,7 +50,8 @@ class LeafNode(HTMLNode):
         return f"HTMLNode({self.tag}, {self.value}, {self.props})"
 
     def to_html(self):
-        if self.value is None or self.value == "":
+        
+        if self.tag != "img" and (self.value is None or self.value == ""):
             raise ValueError("a Leaf node must have a value !!")  
         if self.tag  is None:
             return f"{self.value}"
@@ -55,7 +59,7 @@ class LeafNode(HTMLNode):
             return f'<{self.tag}>{self.value}</{self.tag}>'
         else:
             r = self.props_to_html()
-            return f'<{self.tag} {r}>{self.value}</{self.tag}>'
+            return f'<{self.tag}{r}>{self.value}</{self.tag}>'
 
             
 

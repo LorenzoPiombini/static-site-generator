@@ -169,35 +169,39 @@ def markdown_to_html_node(markdown: str) -> HTMLNode:
 
             sp = b.split('\n')
             data = " ".join(sp)
-            children = text_to_children(data)
+            children = text_to_children(data.replace("#","").lstrip());
             node = ParentNode(f"h{count}",children)
             html_nodes.append(node)
             continue
         if btype == BlockType.QUOTE:
             rp = b.replace(">","")
             sp = rp.split("\n")
+            stripped = []
             for s in sp:
-                s.strip()
-            data = " ".join(sp)
+                if s != "":
+                    stripped.append(s.strip())
+            data = " ".join(stripped)
             children = text_to_children(data)
             node = ParentNode("blockquote",children)
             html_nodes.append(node)
             continue
         if btype == BlockType.ULIST:
-            rp = b.replace("-","")
-            sp = rp.split("\n")
+            sp = b.split("\n")
             ul_kids = []
             for s in sp:
-                ul_kids.append(LeafNode("li",s))
+                if s == "":
+                    continue
+                line = s[2:]
+                ul_kids.append(ParentNode("li",text_to_children(line)))
             node = ParentNode("ul",ul_kids)
             html_nodes.append(node)
             continue
         if btype == BlockType.OLIST:
-            cl = re.sub(r"\d+\.\s",b)
+            cl = re.sub(r"\d+\.\s","",b)
             sp = cl.split('\n')
             ol_kids = []
             for s in sp:
-                ol_kids.append(LeafNode("li",s))
+                ol_kids.append(ParentNode("li",text_to_children(s)))
             node = ParentNode("ol",ol_kids)
             html_nodes.append(node)
             continue
@@ -207,5 +211,15 @@ def markdown_to_html_node(markdown: str) -> HTMLNode:
 
     parent_div = ParentNode("div",html_nodes)
     return parent_div
+
+def extract_title(markdown: str):
+    lines = markdown.split("\n")
+    for l in lines:
+        if l.count("#") == 1:
+            return l.replace("#","").lstrip().rstrip()
+    raise ValueError("there is not Title in this markdown")
+    
+    
+
 
 

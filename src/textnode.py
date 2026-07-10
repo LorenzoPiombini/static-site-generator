@@ -35,9 +35,10 @@ def text_node_to_html_node(text_node: TextNode) -> LeafNode:
         if text_node.text_type == TextType.CODE:
             return LeafNode("code",text_node.text)
         if text_node.text_type == TextType.LINK:
-            return LeafNode("a",text_node.text)
+            return LeafNode("a",text_node.text,{"href":f'{text_node.url}'})
         if text_node.text_type == TextType.IMAGE:
-            return LeafNode("img",None,{"src":f'{self.url}',"alt":f'{self.text}'})
+            return LeafNode("img",None,{"src":f'{text_node.url}',"alt":f'{text_node.text}'})
 
     except AttributeError as e:
         raise ValueError(e)
+
