@@ -1,7 +1,7 @@
 import os
 import shutil
 
-WORKING_DIRECTORY = '/home/lpiombini/boot.dev/static-site-generator/'
+WORKING_DIRECTORY = '/LorenzoPiombini/static-site-generator'
 
 def is_path_valid(working_directory: str ,path:str) -> bool:
         absolute_path = os.path.abspath(working_directory)
@@ -26,7 +26,8 @@ def copy_file_over(src:str,dest:str):
 def copy_content_to_folder(working: str, src:str,dest:str):
     try:
         if is_path_valid(working,dest) and is_path_valid(working,src):
-            shutil.rmtree(dest)
+            if os.path.exists(dest):
+                shutil.rmtree(dest)
             os.mkdir(dest)
 
             #list the direcotry content 
