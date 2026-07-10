@@ -1,7 +1,7 @@
 import os
 import shutil
 
-WORKING_DIRECTORY = '/LorenzoPiombini/static-site-generator'
+WORKING_DIRECTORY = '/LorenzoPiombini/static-site-generator/'
 
 def is_path_valid(working_directory: str ,path:str) -> bool:
         absolute_path = os.path.abspath(working_directory)
